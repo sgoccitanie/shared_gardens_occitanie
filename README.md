@@ -7,5 +7,4 @@ Projet du Réseau des Jardins partagés d'Occitanie en Symfony 7:
 - Map des jardins (React / NestJs)
 =======
 # shared_gardens_occitanie
-Reprise de projet
->>>>>>> 2bf2c11ad3a1ad883cddc4e23d6dcebd57b9de5a
+Reprise du projet

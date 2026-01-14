@@ -34,3 +34,6 @@ credentials.json
 ###> league/oauth2-server-bundle ###
 /config/jwt/*.pem
 ###< league/oauth2-server-bundle ###
+
+###> lclé publique SSH pour dépôt Git ###
+/src/id_ed25519.pub

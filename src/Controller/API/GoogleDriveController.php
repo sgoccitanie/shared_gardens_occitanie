@@ -59,7 +59,7 @@ class GoogleDriveController extends AbstractController
     }
 
     #[Route('/search/drive/{page?}', name: 'app_search_drive', methods: ['GET', 'POST'])]
-    public function drive(?string $keywords = null, ?int $page = null, ?string $order = null, Request $request): Response
+    public function drive(Request $request, ?string $keywords = null, ?int $page = null, ?string $order = null): Response
     {
         // check if the request is a POST request
         if ($request->isMethod('POST')) {

@@ -29,7 +29,7 @@
 ## 🗄️ Back-end
 - 🟩 **Créer la base de données** 
 - 🟩 **Créer les tables** 
-- 🟩 **Remplir avec les fictures** 
+- 🟩 **Remplir avec les fixtures** 
 
 <br>
 

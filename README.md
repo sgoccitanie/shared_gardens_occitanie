@@ -6,10 +6,18 @@
 
 
 ## ⚙️ Installation
-* ### Vérifier
-- composer --version\
-- symfony version\
-* ### Installer
+### Vérifier
+- composer --version
+- symfony php bin/console --version
+- php  -v
+
+
+### Désinstaller Typesense
+- composer remove typesense/typesense-php
+
+
+### Installer
+- composer require --dev doctrine/doctrine-fixtures-bundle
 - composer require symfony/form\
 - composer require --dev orm-fixtures\
 - composer require fakerphp/faker --dev\

@@ -7,9 +7,11 @@
 
 ## ⚙️ Installation
 ### Vérifier
-- composer --version
-- symfony php bin/console --version
-- php  -v
+- composer 2.9.3
+- symfony 7.1.0
+- php 8.3.28
+- MySQL 8.4.7
+
 
 
 ### Désinstaller Typesense

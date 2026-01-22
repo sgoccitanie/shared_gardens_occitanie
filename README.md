@@ -6,7 +6,7 @@
 
 
 ## ⚙️ Installation
-### Vérifier
+###  > Vérifier
 - composer 2.9.3
 - symfony 7.1.0
 - php 8.3.28
@@ -14,11 +14,11 @@
 
 
 
-### Désinstaller Typesense
+###  > Désinstaller Typesense
 - composer remove typesense/typesense-php
 
 
-### Installer
+###  > Installer
 - composer require --dev doctrine/doctrine-fixtures-bundle
 - composer require symfony/form\
 - composer require --dev orm-fixtures\

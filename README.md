@@ -2,6 +2,9 @@
 ## Reprise du projet ["jardins-partages-occitanie"](https://github.com/jbarn9/jardins-partages-occitanie)
 
 
+![Logo SDJ](assets/img/logos/logo_SDJ.png)
+
+
 ## ⚙️ Installation
 ### Vérifier
 - composer 2.9.3

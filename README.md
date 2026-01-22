@@ -2,7 +2,7 @@
 ## Reprise du projet ["jardins-partages-occitanie"](https://github.com/jbarn9/jardins-partages-occitanie)
 
 
-![Logo SDJ](assets/img/logos/logo_SDJ.png)
+<img src="assets/img/logos/logo_SDJ.png" alt="Logo SDJ" width="200"/>
 
 
 ## ⚙️ Installation

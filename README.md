@@ -2,9 +2,6 @@
 ## Reprise du projet ["jardins-partages-occitanie"](https://github.com/jbarn9/jardins-partages-occitanie)
 
 
-![Le réseau des jardins partagés](assets\img\logos\logo_SDJ.png)
-
-
 ## ⚙️ Installation
 ### Vérifier
 - composer 2.9.3

@@ -8,9 +8,29 @@ class HeaderService
 {
     public function __construct(private TextAnalyzerService $textAnalyzerService) {}
 
-    public function getHeaderData(AssociationRepository $assoRepo): array
+    /**
+     * Récupèrer les données de l'association en fonction de l'ID fourni
+     */
+    public function getHeaderData(AssociationRepository $assoRepo, int $associationId): array
     {
-        $asso = $assoRepo->findOneBy(['id' => 17]);
+        // Utiliser la variable $associationId pour résoudre l'erreur en dur avec id=17 ci-dessous
+        // $asso = $assoRepo->findOneBy(['id' => 17]);
+        $asso = $assoRepo->findOneBy(['id' => $associationId]);
+
+        if (!$asso) {
+            // Gérer le cas où l'association n'est pas trouvée : retourner des valeurs par défaut
+            return [
+                'assoMantra' => ["Choisir un mantra"],
+                'assoBanner' => null,
+                'assoLogo' => null,
+                'assoAddress' => null,
+                'assoDescription' => null,
+                'assoEmail' => null,
+                'assoPhone' => null,
+                'assoLinks' => null,
+            ];
+        }
+
         if (empty($asso->getMantra())) {
             $assoMantra[0] = "Choisir un mantra";
         } else {

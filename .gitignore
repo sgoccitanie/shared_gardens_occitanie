@@ -3,6 +3,7 @@
 /.env.local.php
 /.env.*.local
 /.env
+/.env.dev
 /.env.*
 /.env.test
 /config/secrets/
@@ -35,5 +36,5 @@ credentials.json
 /config/jwt/*.pem
 ###< league/oauth2-server-bundle ###
 
-###> lclé publique SSH pour dépôt Git ###
+###> clé publique SSH pour dépôt Git ###
 /src/id_ed25519.pub

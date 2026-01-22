@@ -14,6 +14,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 class HomeController extends AbstractController
 {
     private $pageTitle = 'Accueil | Réseau des Semeurs de Jardins';
+
     public function __construct(
         private HeaderService $headerService,
         private PostsRepository $postsRepository,
@@ -22,46 +23,65 @@ class HomeController extends AbstractController
         private SluggerInterface $slugger
     ) {}
 
-    #[Route('/{slug?}', name: 'app_home', methods: ['GET'])]
+    // Ajout du paramètre $id dans la route
+    #[Route('/{slug?}/{id?}', name: 'app_home', methods: ['GET'])]
     public function index(?string $slug, ?int $id): Response
     {
-        if ($slug == null) {
-            $slug = $this->tabsRepository->findOneBy(['id' => 171])->getSlug();
+        if ($slug === null && $id === null) {
+            // Ajouter 'pages' pour éviter l'erreur Twig
+            // Initialiser $pages à un tableau vide
+            $pages = [];
+
+            return $this->render('home/index.html.twig', [
+                'pageTitle' => $this->pageTitle,
+                'pages' => $pages,
+            ]);
         }
+
+        if ($slug === null) {
+            if ($id !== null) {
+                // Récupèrer le tab avec id
+                $tab = $this->tabsRepository->find($id);
+                if ($tab !== null) {
+                    $slug = $tab->getSlug();
+                } else {
+                    throw $this->createNotFoundException('Tab non trouvé pour l\'id ' . $id);
+                }
+            } else {
+                throw $this->createNotFoundException('Slug ou ID requis.');
+            }
+        }
+
         $order = 'DESC';
+
         // get posts
         try {
-            $posts = $this->postsRepository->createQueryBuilder('p')
+            $postsQueryBuilder = $this->postsRepository->createQueryBuilder('p')
                 ->addSelect('t')
                 ->innerJoin('p.tab', 't')
                 ->andWhere('t.slug = :slug')
                 ->setParameter('slug', $slug)
                 ->andWhere('p.status = 1')
                 ->orderBy('p.posted_at', $order);
-            $query = $posts->getQuery();
-            $posts = $query->execute();
+            $posts = $postsQueryBuilder->getQuery()->execute();
         } catch (\Exception $e) {
             $posts = [];
         }
+
         // get pages
         try {
             $pages = $this->pagesRepository->createQueryBuilder('p')
                 ->addSelect('t')
                 ->leftJoin('p.tabs_page', 't')
-                ->andWhere('p.home = 1');
-            $query = $pages->getQuery();
-            $pages = $query->execute();
+                ->andWhere('p.home = 1')
+                ->getQuery()
+                ->execute();
         } catch (\Exception $e) {
             $pages = [];
-        };
-        $select = false;
-        $eventCalendar = false;
-        if (count($posts) > 0) {
-            $select = true;
         }
-        if ($slug == 'coming') {
-            $eventCalendar = true;
-        }
+
+        $select = count($posts) > 0;
+        $eventCalendar = ($slug === 'coming');
 
         return $this->render('home/index.html.twig', [
             'pageTitle' => $this->pageTitle,
@@ -75,31 +95,42 @@ class HomeController extends AbstractController
     }
 
     #[Route('/{slug?}/order/{order}', name: 'app_home_order', methods: ['POST'])]
-    public function order(?string $slug, ?string $order): Response
+    public function order(?string $slug, ?string $order, ?int $id): Response
     {
-        if ($slug == null) {
-            $slug = $this->tabsRepository->findOneBy(['id' => 171])->getSlug();
+        if ($slug === null) {
+            if ($id !== null) {
+                $tab = $this->tabsRepository->find($id);
+                if ($tab !== null) {
+                    $slug = $tab->getSlug();
+                } else {
+                    throw $this->createNotFoundException('Tab non trouvé pour l\'id ' . $id);
+                }
+            } else {
+                throw $this->createNotFoundException('Slug ou ID requis.');
+            }
         }
 
-        if ($order == 'ASC' || $order == 'DESC') {
-            try {
-                $posts = $this->postsRepository->createQueryBuilder('p')
-                    ->addSelect('t')
-                    ->innerJoin('p.tab', 't')
-                    ->andWhere('t.slug = :slug')
-                    ->setParameter('slug', $slug)
-                    ->andWhere('p.status = 1')
-                    ->orderBy('p.posted_at', $order);
-                $query = $posts->getQuery();
-                $posts = $query->execute();
-            } catch (\Exception $e) {
-                $posts = [];
-            }
-        } else {
+        if ($order !== 'ASC' && $order !== 'DESC') {
             $order = 'DESC';
         }
+
+        try {
+            $posts = $this->postsRepository->createQueryBuilder('p')
+                ->addSelect('t')
+                ->innerJoin('p.tab', 't')
+                ->andWhere('t.slug = :slug')
+                ->setParameter('slug', $slug)
+                ->andWhere('p.status = 1')
+                ->orderBy('p.posted_at', $order)
+                ->getQuery()
+                ->execute();
+        } catch (\Exception $e) {
+            $posts = [];
+        }
+
         $select = true;
         $eventCalendar = false;
+
         return $this->render('home/postslist.html.twig', [
             'posts' => $posts,
             'slug' => $slug,
@@ -113,23 +144,29 @@ class HomeController extends AbstractController
     public function post(?string $slug, ?string $id): Response
     {
         try {
-            $post = $this->postsRepository->findBy(['id' => $id]);
+            $post = $this->postsRepository->find($id);
         } catch (\Exception $e) {
-            $post = [];
+            $post = null; // Corrigé pour renvoyer null si pas trouvé
         }
+        if (!$post) {
+            throw $this->createNotFoundException('Post non trouvé');
+        }
+
         $select = false;
         $eventCalendar = false;
         $backToList = true;
+
         try {
             $pages = $this->pagesRepository->createQueryBuilder('p')
                 ->addSelect('t')
                 ->leftJoin('p.tabs_page', 't')
-                ->andWhere('p.home = 1');
-            $query = $pages->getQuery();
-            $pages = $query->execute();
+                ->andWhere('p.home = 1')
+                ->getQuery()
+                ->execute();
         } catch (\Exception $e) {
             $pages = [];
-        };
+        }
+
         return $this->render('home/index.html.twig', [
             'pageTitle' => $this->pageTitle,
             'posts' => $post,

@@ -1,14 +1,17 @@
 <ul class="navbar-nav h-100">
-	<div
-		class="d-flex h-100">
+	<div class="d-flex h-100">
 		<!-- Sidebar -->
 		<div id="sidebar" class="h-100">
-			<div
-				class="d-flex flex-column h-100">
+			<div class="d-flex flex-column h-100">
 				{# SDJ logo #}
 				<div class="d-flex justify-content-center">
 					<a class="logo" href="{{ path('app_home') }}" target="_blank">
-						<img src="{{ asset('uploads/profiles/SDJ/logo/' ~ app.request.attributes.get('header_data').assoLogo) }}" width="150" height="100">
+						{% if headerData.assoLogo %}
+						{% TESTS EN COURS ... %}
+  					<img src="{{ asset('uploads/profiles/SDJ/logo/' ~ headerData.assoLogo) }}" width="150" height="100">
+					{% else %}
+  					<p>Logo non disponible</p>
+					{% endif %}
 					</a>
 				</div>
 				{# Menu #}
@@ -38,25 +41,29 @@
 						Carte des jardins
 					</a>
 				</nav>
+				{# Coordinates #}
 				<div class="coordinates-asso align-content-end justify-content-center h-100 px-3 py-5">
 					<p class="contact-us text-center fw-bolder fs-5">Contactez-nous</p>
+					{% set headerData = app.request.attributes.get('header_data') %}
 					<p class="street">
-						{{ app.request.attributes.get('header_data').assoAddress ?? '' }}
+						{{ headerData is not null ? headerData.assoAddress ?? '' }}
 					</p>
 					<p class="city">
-						{{ app.request.attributes.get('header_data').assoDescription ?? '' }}
+						{{ headerData is not null ? headerData.assoDescription ?? '' }}
 					</p>
 					<p class="color-green text-center fw-bolder">
 						<a href="{{ path('app_contact') }}#simple-list-item-2" class="color-green fw-bolder">Accès à la carte</a>
 					</p>
 					<p class="email">
 						<i class="fa-solid fa-envelope"></i>
-						<a href="mailto:{{ app.request.attributes.get('header_data').assoEmail ?? '' }}" class="fw-bolder">{{ app.request.attributes.get('header_data').assoEmail ?? '' }}</a>
+						<a href="mailto:{{ headerData is not null ? headerData.assoEmail ?? '' }}"> {{ headerData is not null ? headerData.assoEmail ?? '' }} </a>
 					</p>
 					<p class="phone">
 						<i class="fa-solid fa-phone"></i>
-						{{ app.request.attributes.get('header_data').assoPhone ?? '' }}
+						{{ headerData is not null ? headerData.assoPhone ?? '' }}
 					</p>
 				</div>
 			</div>
-		</ul>
+		</div>
+	</div>
+</ul>

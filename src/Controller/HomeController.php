@@ -6,10 +6,11 @@ use App\Repository\PagesRepository;
 use App\Repository\PostsRepository;
 use App\Repository\TabsRepository;
 use App\Service\HeaderService;
+use App\Service\PageLogicService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack; // Import nécessaire
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class HomeController extends AbstractController
 {
@@ -20,41 +21,58 @@ class HomeController extends AbstractController
         private PostsRepository $postsRepository,
         private TabsRepository $tabsRepository,
         private PagesRepository $pagesRepository,
-        private SluggerInterface $slugger
+        private PageLogicService $pageLogicService,
+        private RequestStack $requestStack // Inject RequestStack
     ) {}
 
-    // Ajout du paramètre $id dans la route
     #[Route('/{slug?}/{id?}', name: 'app_home', methods: ['GET'])]
     public function index(?string $slug, ?int $id): Response
     {
-        if ($slug === null && $id === null) {
-            // Ajouter 'pages' pour éviter l'erreur Twig
-            // Initialiser $pages à un tableau vide
-            $pages = [];
+        // Récupérer la requête courante
+        $request = $this->requestStack->getCurrentRequest();
 
+        // Récupérer headerData
+        $headerData = ($id !== null)
+            ? $this->headerService->getHeaderData($id)
+            : $this->headerService->getDefaultHeaderData();
+
+        // Préparer le logo (non modifié ici)
+        $assoLogo = [
+            'logoUrl' => 'path/to/default/logo.png',
+            'link' => $this->generateUrl('app_home'),
+        ];
+        if (!empty($headerData['assoLogo'])) {
+            $assoLogo['logoUrl'] = 'uploads/profiles/SDJ/logo/' . $headerData['assoLogo'];
+        }
+
+        // Si page d'accueil
+        if ($slug === null && $id === null) {
             return $this->render('home/index.html.twig', [
                 'pageTitle' => $this->pageTitle,
-                'pages' => $pages,
+                'pages' => [],
+                'headerData' => $headerData,
+                'backToList' => false,
+                'assoLogo' => $assoLogo,
             ]);
         }
 
-        if ($slug === null) {
-            if ($id !== null) {
-                // Récupèrer le tab avec id
-                $tab = $this->tabsRepository->find($id);
-                if ($tab !== null) {
-                    $slug = $tab->getSlug();
-                } else {
-                    throw $this->createNotFoundException('Tab non trouvé pour l\'id ' . $id);
-                }
+        // Si pas de slug mais id, récupérer le slug
+        if ($slug === null && $id !== null) {
+            $tab = $this->tabsRepository->find($id);
+            if ($tab !== null) {
+                $slug = $tab->getSlug();
             } else {
-                throw $this->createNotFoundException('Slug ou ID requis.');
+                throw $this->createNotFoundException('Tab non trouvé pour l\'id ' . $id);
             }
         }
 
-        $order = 'DESC';
+        // Récupérer la route courante
+        $currentRoute = $request->attributes->get('_route');
 
-        // get posts
+        // Définir $isHomeRoute
+        $isHomeRoute = ($currentRoute === 'app_home');
+
+        // Récupérer les posts
         try {
             $postsQueryBuilder = $this->postsRepository->createQueryBuilder('p')
                 ->addSelect('t')
@@ -62,17 +80,17 @@ class HomeController extends AbstractController
                 ->andWhere('t.slug = :slug')
                 ->setParameter('slug', $slug)
                 ->andWhere('p.status = 1')
-                ->orderBy('p.posted_at', $order);
+                ->orderBy('p.posted_at', 'DESC');
             $posts = $postsQueryBuilder->getQuery()->execute();
         } catch (\Exception $e) {
             $posts = [];
         }
 
-        // get pages
+        // Récupérer les pages
         try {
             $pages = $this->pagesRepository->createQueryBuilder('p')
                 ->addSelect('t')
-                ->leftJoin('p.tabs_page', 't')
+                ->leftJoin('p.tabsPage', 't')
                 ->andWhere('p.home = 1')
                 ->getQuery()
                 ->execute();
@@ -80,101 +98,22 @@ class HomeController extends AbstractController
             $pages = [];
         }
 
-        $select = count($posts) > 0;
-        $eventCalendar = ($slug === 'coming');
-
-        return $this->render('home/index.html.twig', [
-            'pageTitle' => $this->pageTitle,
+        // Récupérer le contexte via le service
+        $context = $this->pageLogicService->getPageContext([
+            'slug' => $slug,
             'posts' => $posts,
             'pages' => $pages,
-            'slug' => $slug,
-            'select' => $select,
-            'eventCalendar' => $eventCalendar,
-            'order' => $order
+            'headerData' => $headerData,
+            'order' => null,
+            'backToList' => false,
+            'currentRoute' => $currentRoute,
+            'isHomeRoute' => $isHomeRoute,
         ]);
-    }
 
-    #[Route('/{slug?}/order/{order}', name: 'app_home_order', methods: ['POST'])]
-    public function order(?string $slug, ?string $order, ?int $id): Response
-    {
-        if ($slug === null) {
-            if ($id !== null) {
-                $tab = $this->tabsRepository->find($id);
-                if ($tab !== null) {
-                    $slug = $tab->getSlug();
-                } else {
-                    throw $this->createNotFoundException('Tab non trouvé pour l\'id ' . $id);
-                }
-            } else {
-                throw $this->createNotFoundException('Slug ou ID requis.');
-            }
-        }
-
-        if ($order !== 'ASC' && $order !== 'DESC') {
-            $order = 'DESC';
-        }
-
-        try {
-            $posts = $this->postsRepository->createQueryBuilder('p')
-                ->addSelect('t')
-                ->innerJoin('p.tab', 't')
-                ->andWhere('t.slug = :slug')
-                ->setParameter('slug', $slug)
-                ->andWhere('p.status = 1')
-                ->orderBy('p.posted_at', $order)
-                ->getQuery()
-                ->execute();
-        } catch (\Exception $e) {
-            $posts = [];
-        }
-
-        $select = true;
-        $eventCalendar = false;
-
-        return $this->render('home/postslist.html.twig', [
-            'posts' => $posts,
-            'slug' => $slug,
-            'order' => $order,
-            'select' => $select,
-            'eventCalendar' => $eventCalendar
-        ]);
-    }
-
-    #[Route('/{slug}/{id}', name: 'app_home_post', methods: ['GET'])]
-    public function post(?string $slug, ?string $id): Response
-    {
-        try {
-            $post = $this->postsRepository->find($id);
-        } catch (\Exception $e) {
-            $post = null; // Corrigé pour renvoyer null si pas trouvé
-        }
-        if (!$post) {
-            throw $this->createNotFoundException('Post non trouvé');
-        }
-
-        $select = false;
-        $eventCalendar = false;
-        $backToList = true;
-
-        try {
-            $pages = $this->pagesRepository->createQueryBuilder('p')
-                ->addSelect('t')
-                ->leftJoin('p.tabs_page', 't')
-                ->andWhere('p.home = 1')
-                ->getQuery()
-                ->execute();
-        } catch (\Exception $e) {
-            $pages = [];
-        }
-
-        return $this->render('home/index.html.twig', [
+        // Transmettre le contexte et les autres variables voulues
+        return $this->render('home/index.html.twig', array_merge($context, [
             'pageTitle' => $this->pageTitle,
-            'posts' => $post,
-            'pages' => $pages,
-            'slug' => $slug,
-            'select' => $select,
-            'eventCalendar' => $eventCalendar,
-            'backToList' => $backToList
-        ]);
+            'isHomeRoute' => $isHomeRoute,
+        ]));
     }
 }

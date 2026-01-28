@@ -46,8 +46,10 @@
 
 ## 🌐 Front-end
 
-- 🚧 Réparer les exceptions
+- 🟩 Réparer les exceptions
 
 <br>
 
 ## 🔧 Continuer l'initialisation du projet original
+
+- 🚧 Corriger les bugs

@@ -7,6 +7,7 @@ parameters:
   app.jwtsecret: "%env(JWT_SECRET)%"
   uploads_directory: "%kernel.project_dir%/assets/uploads/"
   google_application_credentials: "%kernel.project_dir%/config/secrets/semeursdejardins-5a67040c98d2.json"
+  kernel.secret: '%env(KERNEL_SECRET)%'
 services:
   twig.extension.intl:
     class: Twig\Extra\Intl\IntlExtension

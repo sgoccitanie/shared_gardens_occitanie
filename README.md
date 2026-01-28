@@ -2,7 +2,6 @@
 [![](https://img.shields.io/badge/PHP-blue?style=for-the-badge)](https://hamzamohdzubair.github.io/redant/)
 [![](https://img.shields.io/badge/Bootstrap-blueviolet?style=for-the-badge)](https://hamzamohdzubair.github.io/redant/)
 
-
 <div align="center">
   
 #  $\textsf{\color{blue}{shared gardens occitanie}}$
@@ -10,27 +9,26 @@
 <br/>
 </div>
 
-
 <div align="center">
 
-  
 <img src="assets/img/logos/logo_SDJ.png" alt="Logo SDJ" width="400"/>
 </div>
 
 ## ⚙️ Installation
-###  > Vérifier
+
+### > Vérifier
+
 - composer 2.9.3
 - symfony 7.1.0
 - php 8.3.28
 - MySQL 8.4.7
 
+### > Désinstaller Typesense
 
-
-###  > Désinstaller Typesense
 - composer remove typesense/typesense-php
 
+### > Installer
 
-###  > Installer
 - composer require --dev doctrine/doctrine-fixtures-bundle
 - composer require symfony/form\
 - composer require --dev orm-fixtures\
@@ -39,16 +37,19 @@
 <br>
 
 ## 🗄️ Back-end
-- 🟩 **Créer la base de données** 
-- 🟩 **Créer les tables** 
-- 🟩 **Remplir avec les fixtures** 
+
+- 🟩 **Créer la base de données**
+- 🟩 **Créer les tables**
+- 🟩 **Remplir avec les fixtures**
 
 <br>
 
 ## 🌐 Front-end
-- 🚧 Réparer les exceptions
+
+- 🟩 Réparer les exceptions
 
 <br>
 
 ## 🔧 Continuer l'initialisation du projet original
 
+- 🚧 Corriger les bugs

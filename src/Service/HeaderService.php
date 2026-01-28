@@ -6,71 +6,39 @@ use App\Repository\AssociationRepository;
 
 class HeaderService
 {
-    public function __construct(private TextAnalyzerService $textAnalyzerService) {}
+    public function __construct(
+        private TextAnalyzerService $textAnalyzerService,
+        private AssociationRepository $assoRepo
+    ) {}
 
-    public function getHeaderData(AssociationRepository $assoRepo): array
+    /**
+     * Récupèrer les données de l'association en fonction de l'ID fourni
+     */
+    public function getHeaderData(int $id): array
     {
-        $asso = $assoRepo->findOneBy(['id' => 17]);
-        if (empty($asso->getMantra())) {
-            $assoMantra[0] = "Choisir un mantra";
-        } else {
-            $assoMantra = $asso->getMantra();
-        }
-        if (empty($asso->getBanner())) {
-            $assoBanner = null;
-        } else {
-            $assoBanner = $asso->getBanner();
-        }
-        if (empty($asso->getLogo())) {
-            $assoLogo = null;
-        } else {
-            $assoLogo = $asso->getLogo();
-        }
-        if (empty($asso->getAddress())) {
-            $assoAddress = null;
-        } else {
-            $assoAddress = $asso->getAddress();
-            // dd($assoAddress);
-        }
-        if (empty($asso->getDescription())) {
-            $assoDescription = null;
-        } else {
-            $assoDescription = $asso->getDescription();
-        }
-        if (empty($asso->getEmail())) {
-            $assoEmail = null;
-        } else {
-            $assoEmail = $asso->getEmail();
-        }
-        if (empty($asso->getMobile())) {
-            $assoPhone = null;
-        } else {
-            $assoPhone = $asso->getMobile();
-        }
-        if (empty($asso->getLinks())) {
-            $assoLinks = null;
-        } else {
-            $assoLinks = $asso->getLinks();
-            $assoLinks = $assoLinks->toArray();
-            foreach ($assoLinks as $link) {
-                $assoLinks[] = Utils::decode($link->getUrl());
-            }
+        $asso = $this->assoRepo->findOneBy(['id' => $id]);
+
+        if (!$asso) {
+            return $this->getDefaultHeaderData();
         }
 
-        // decode the data
-        $assoMantra = Utils::decode($assoMantra);
-        $assoBanner = Utils::decode($assoBanner);
-        $assoLogo = Utils::decode($assoLogo);
-        $assoAddress = Utils::decode($assoAddress);
-        $assoDescription = Utils::decode($assoDescription);
-        $assoEmail = Utils::decode($assoEmail);
-        $assoPhone = Utils::decode($assoPhone);
+        // Récupérer et décoder chaque champ
+        $assoMantra = $this->decodeOrDefault($asso->getMantra(), ["Choisir un mantra"]);
+        $assoBanner = $this->decodeOrDefault($asso->getBanner(), null);
+        $assoLogo = $this->decodeOrDefault($asso->getLogo(), null);
+        $assoAddress = $this->decodeOrDefault($asso->getAddress(), null);
+        $assoDescription = $this->decodeOrDefault($asso->getDescription(), null);
+        $assoEmail = $this->decodeOrDefault($asso->getEmail(), null);
+        $assoPhone = $this->decodeOrDefault($asso->getMobile(), null);
+        $assoLinks = $this->decodeOrDefaultLinks($asso->getLinks());
 
+        // Traiter le mantra
         if ($this->textAnalyzerService->getWordCount($assoMantra) > 4 && !str_contains($assoMantra, ",")) {
             $assoMantra = $this->textAnalyzerService->splitTextByWordCount($assoMantra, 4);
         } else {
             $assoMantra = $this->textAnalyzerService->splitAtComma($assoMantra);
         }
+
         return [
             'assoMantra' => $assoMantra,
             'assoBanner' => $assoBanner,
@@ -81,5 +49,43 @@ class HeaderService
             'assoPhone' => $assoPhone,
             'assoLinks' => $assoLinks,
         ];
+    }
+
+    /**
+     * Retourner les données par défaut pour l'en-tête
+     */
+    public function getDefaultHeaderData(): array
+    {
+        return [
+            'assoMantra' => ["Choisir un mantra"],
+            'assoBanner' => null,
+            'assoLogo' => null,
+            'assoAddress' => null,
+            'assoDescription' => null,
+            'assoEmail' => null,
+            'assoPhone' => null,
+            'assoLinks' => null,
+        ];
+    }
+
+    private function decodeOrDefault($value, $default)
+    {
+        if (empty($value)) {
+            return $default;
+        }
+        return Utils::decode($value);
+    }
+
+    private function decodeOrDefaultLinks($links)
+    {
+        if (!$links) {
+            return []; // Retourner un tableau vide au lieu de null
+        }
+        $linksArray = $links->toArray();
+        $decodedLinks = [];
+        foreach ($linksArray as $link) {
+            $decodedLinks[] = Utils::decode($link->getUrl());
+        }
+        return $decodedLinks;
     }
 }

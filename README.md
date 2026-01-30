@@ -47,6 +47,7 @@
 ## 🌐 Front-end
 
 - 🟩 Réparer les exceptions
+- 🚧 Résoudre les problèmes d'affichages et de navigation dans les pages
 
 <br>
 

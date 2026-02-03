@@ -1,5 +1,0 @@
-framework:
-    session:
-        enabled: true
-    csrf_protection:
-        enabled: true

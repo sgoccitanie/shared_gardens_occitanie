@@ -11,7 +11,7 @@
 
 <div align="center">
 
-<img src="assets/img/logos/logo_SDJ.png" alt="Logo SDJ" width="400"/>
+<img src="/img/logos/logo_SDJ.png" alt="Logo SDJ" width="400"/>
 </div>
 
 ## ⚙️ Installation
@@ -47,7 +47,9 @@
 ## 🌐 Front-end
 
 - 🟩 Réparer les exceptions
-- 🚧 Résoudre les problèmes d'affichages et de navigation dans les pages
+- 🟩 Résoudre les problèmes d'affichages de logo et de mantra
+- 🟩 Résoudre les problèmes d'affichage des articles de la page d'accueil
+- 🚧 Résoudre les problèmes de navigation depuis la page accueil
 
 <br>
 

@@ -47,9 +47,8 @@
 ## 🌐 Front-end
 
 - 🟩 Réparer les exceptions
-- 🟩 Résoudre les problèmes d'affichages de logo et de mantra
-- 🟩 Résoudre les problèmes d'affichage des articles de la page d'accueil
-- 🚧 Résoudre les problèmes de navigation depuis la page accueil
+- 🟩 Résoudre les problèmes d'affichages (logo, mantra, articles) et de navigation
+- 🚧 Résoudre les problèmes de navigation des onglets Ressources, Calendrier et Carte des jardins
 
 <br>
 

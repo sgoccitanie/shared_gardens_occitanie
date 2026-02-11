@@ -48,6 +48,7 @@
 
 - 🟩 Réparer les exceptions
 - 🟩 Résoudre les problèmes d'affichages (logo, mantra, articles) et de navigation
+- 🟩 Accéder/naviguer dans l'espace administrateur
 - 🚧 Résoudre les problèmes de navigation des onglets Ressources, Calendrier et Carte des jardins
 
 <br>
@@ -55,3 +56,4 @@
 ## 🔧 Continuer l'initialisation du projet original
 
 - 🚧 Corriger les bugs
+- 🚧 Finir le design suivant les consignes

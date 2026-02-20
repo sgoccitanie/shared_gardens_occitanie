@@ -19,7 +19,7 @@ function orderPosts() {
     }
   };
   xhr.send(
-    "order=" + encodeURIComponent(document.getElementById("order").value)
+    "order=" + encodeURIComponent(document.getElementById("order").value),
   );
 }
 
@@ -34,7 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   iconSearch.addEventListener("click", function () {
     const icon = iconSearch.children[0];
-    // console.log(icon);
     if (icon.classList.contains("fa-close")) {
       searchInput.value = "";
       iconSearch.innerHTML = "<i class='fa-solid fa-search'></i>";
@@ -67,6 +66,6 @@ function displayAllDriveResults() {
     "keywords=" +
       encodeURIComponent(document.getElementById("searchInput").value) +
       "&order=" +
-      encodeURIComponent(order)
+      encodeURIComponent(order),
   );
 }

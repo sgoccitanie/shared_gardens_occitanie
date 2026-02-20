@@ -1,4 +1,4 @@
-// Accueil : afficher les articles dans l'ordre choisi
+// Fonction pour changer l'ordre des articles
 function orderPosts() {
   const list = document.getElementById("postslist-container");
   const order = document.querySelector("#order").value;
@@ -29,14 +29,12 @@ function orderPosts() {
     });
 }
 
+// Fonction pour aller à un post spécifique
 function goToPost(id) {
   const list = document.getElementById("postslist-container");
-  // Get the path of the URL
   const path = window.location.pathname;
-  // Extract the slug (assuming it's the last segment of the path)
   const slug = path.substring(path.lastIndexOf("/") + 1);
   console.log("/" + slug + "/" + id);
-  // Get the post with xmlhttprequest
   let xhr = new XMLHttpRequest();
   xhr.open("GET", "/" + slug + "/" + id);
   xhr.onload = function () {
@@ -52,6 +50,7 @@ function goToPost(id) {
   xhr.send();
 }
 
+// Gestion des focus/blur/keyup pour les inputs (informations contact)
 const inputs = document.querySelectorAll("#form-contact .form-control");
 console.log(inputs);
 inputs.forEach(function (input) {
@@ -84,11 +83,3 @@ inputs.forEach(function (input) {
     }
   });
 });
-// document
-//   .querySelectorAll("#form-contact .form-control")
-//   .forEach(function (input) {
-//     console.log(input.value);
-//     if (input.value.length != 0) {
-//       input.closest(".form-group").classList.add("show-label");
-//     }
-//   });

@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // console.log("ok", xhr.responseText);
     } else {
       console.log(
-        "Erreur lors de la récupération des événements : " + xhr.status
+        "Erreur lors de la récupération des événements : " + xhr.status,
       );
     }
   };

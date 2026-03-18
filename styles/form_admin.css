@@ -1,3 +1,8 @@
+:root {
+    --green: #99cd47;
+    --box-shadow-card: 4px 6px 4px 0 rgba(0, 0, 0, 0.25);
+}
+
 #body-container{
     width: 100%;
 }
@@ -54,25 +59,6 @@ body.page-login .content_dashboard{
     border-radius: 8px;
     padding: 0.75rem;
 }
-/* BUTTONS style*/
-.btn.btn-primary, .btn-primary:active, .btn-primary:visited  {
-    background-color: rgba(0, 0, 0, 0)!important;
-    color: var(--turquoise)!important;
-    font-size: 16px!important;
-    font-weight: 200!important;
-    letter-spacing: 1px!important;
-    padding: 4px 10px 8px!important;
-    outline: 0!important;
-    border: 1.5px solid var(--turquoise)!important;
-    cursor: pointer!important;
-    position: relative!important;
-    user-select: none!important;
-    -webkit-user-select: none!important;
-    touch-action: manipulation!important;
-    font-size: var(--font-size-btn)!important;
-    font-weight: 600!important;
-    border-radius: 5px!important;
-}
   
 /* .btn.btn-primary:after {
     content: "";
@@ -126,3 +112,15 @@ body.page-login .content_dashboard{
 .very-strong {
     background-color: #009900;
 }
+
+/* Bouton "Supprimer" */
+.datagrid .actions a.btn-danger {
+    border: 1.5px solid #dc3545 !important;
+    color: #dc3545 !important;
+}
+
+.datagrid .actions a.btn-danger:hover {
+    background-color: #dc3545 !important;
+    /*color: white !important;*/
+}
+

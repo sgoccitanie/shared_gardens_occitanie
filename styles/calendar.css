@@ -1,3 +1,10 @@
+html{
+    font-family: 'KG Second Chances Sketch';
+    src: 
+    url('../fonts/KGSecondChances/KGSecondChancesSketch.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 .coming-soon{
     width: 100%!important;
     margin: 1em 0 5em 0;
